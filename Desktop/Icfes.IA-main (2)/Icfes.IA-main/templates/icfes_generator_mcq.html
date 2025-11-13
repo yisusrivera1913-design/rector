@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICFES Pro - Práctica Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* VARIABLES Y RESET */
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --bg: #0a0a0f;
+            --card: rgba(255, 255, 255, 0.03);
+            --text: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* BACKGROUND ANIMADO */
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(249, 147, 251, 0.15) 0%, transparent 50%);
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(102, 126, 234, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(102, 126, 234, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, #a8b2d1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-3px);
+            border-color: var(--primary);
+        }
+
+        /* MAIN CONTAINER */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 60px;
+        }
+
+        .hero-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* GENERATOR SECTION */
+        .generator-section {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 40px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .generator-section:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-select, .form-input {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-select option {
+            background: #1a1a1a;
+            color: var(--text);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+            box-shadow: var(--shadow);
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* RESULTS SECTION */
+        .results-section {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-bar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 10px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .results-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        /* QUESTIONS */
+        .questions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .question-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .question-card.completed {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .question-number {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px 20px;
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-item:hover:not(.disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateX(5px);
+        }
+
+        .option-item.selected {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .option-item.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .option-item.correct {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+            font-weight: 700;
+        }
+
+        .option-item.incorrect {
+            background: rgba(239, 68, 68, 0.2) !important;
+            border-color: var(--error) !important;
+            color: var(--error) !important;
+        }
+
+        .answer-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* FEEDBACK */
+        .feedback-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .feedback-box.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--error);
+        }
+
+        .feedback-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-box.success .feedback-title {
+            color: var(--success);
+        }
+
+        .feedback-box.error .feedback-title {
+            color: var(--error);
+        }
+
+        .feedback-content {
+            color: var(--text);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-size: 15px;
+        }
+
+        /* ALERTS */
+        .alert {
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-info {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* LOADING */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 20px;
+            }
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .generator-section {
+                padding: 30px 20px;
+            }
+
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .results-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animated"></div>
+    <div class="grid-overlay"></div>
+
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo-icon">🎓</div>
+            <div class="logo-text">ICFES Pro</div>
+        </div>
+        <button class="btn-back" onclick="window.location.href='/'">← Volver a inicio</button>
+    </nav>
+
+    <div class="main-container">
+        <div class="hero-header">
+            <div class="hero-badge">Práctica Inteligente con IA</div>
+            <h1 class="hero-title">Generador de Preguntas ICFES</h1>
+            <p class="hero-subtitle">Responde dinámicamente, recibe retroalimentación detallada y mejora tu rendimiento</p>
+        </div>
+
+        <div class="generator-section">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Competencia</label>
+                    <select class="form-select" id="competenciaSelect">
+                        <option value="">Selecciona una competencia</option>
+                        <option value="Lectura Crítica">Lectura Crítica</option>
+                        <option value="Matemáticas">Matemáticas</option>
+                        <option value="Ciencias Naturales">Ciencias Naturales</option>
+                        <option value="Ciencias Sociales">Ciencias Sociales</option>
+                        <option value="Inglés">Inglés</option>
+                        <option value="Competencia Ciudadana">Competencia Ciudadana</option>
+                        <option value="Física">Física</option>
+                        <option value="Química">Química</option>
+                        <option value="Biología">Biología</option>
+                        <option value="Historia">Historia</option>
+                        <option value="Geografía">Geografía</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dificultad</label>
+                    <select class="form-select" id="dificultadSelect">
+                        <option value="facil">Fácil</option>
+                        <option value="medio" selected>Medio</option>
+                        <option value="avanzado">Avanzado</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Número de Preguntas</label>
+                    <input type="number" class="form-input" id="numQuestionsInput" min="1" max="20" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Conocimiento Personalizado</label>
+                    <select class="form-select" id="customKnowledgeSelect">
+                        <option value="true" selected>Sí (Recomendado)</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="generate-btn" id="generateBtn" onclick="generateQuestions()">
+                🚀 Generar Preguntas
+            </button>
+
+            <div id="messageContainer"></div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="stats-bar" id="statsBar" style="display: none;">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalQuestions">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="answeredQuestions">0</div>
+                    <div class="stat-label">Respondidas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="correctAnswers">0</div>
+                    <div class="stat-label">Correctas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accuracyRate">0%</div>
+                    <div class="stat-label">Precisión</div>
+                </div>
+            </div>
+
+            <div class="results-header">
+                <h2 class="results-title">📝 Preguntas para Practicar</h2>
+                <div class="results-actions">
+                    <button class="btn-action" onclick="exportQuestions()">💾 Exportar</button>
+                    <button class="btn-action" onclick="printQuestions()">🖨️ Imprimir</button>
+                    <button class="btn-action" onclick="resetGenerator()">🔄 Nuevo Set</button>
+                </div>
+            </div>
+
+            <div class="questions-container" id="questionsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN CENTRALIZADA
+        const CONFIG = {
+            API_URL: window.API_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                ? 'http://127.0.0.1:5000' 
+                : 'https://icfes-ia.onrender.com'),
+            MAX_QUESTIONS: 20,
+            MIN_QUESTIONS: 1
+        };
+
+        // ESTADO DE LA APLICACIÓN
+        const state = {
+            questions: [],
+            userAnswers: {},
+            submittedQuestions: new Set(),
+            rawQuestionsText: '',
+            generatedQuestionIds: new Set() // Para evitar preguntas repetidas
+        };
+
+        // UTILIDADES
+        const utils = {
+            showMessage: (type, message, duration = 5000) => {
+                const container = document.getElementById('messageContainer');
+                container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                if (duration > 0) {
+                    setTimeout(() => container.innerHTML = '', duration);
+                }
+            },
+
+            parseQuestions: (rawText) => {
+                if (!rawText) return [];
+                
+                const blocks = rawText.split(/\n{2,}/).filter(block => block.trim());
+                const questions = [];
+
+                for (const block of blocks) {
+                    const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+                    let question = '', options = [], correctAnswer = '', explanation = '';
+
+                    for (const line of lines) {
+                        if (line.toLowerCase().startsWith('pregunta:')) {
+                            question = line.substring(9).trim();
+                        } else if (/^[a-d]\)/i.test(line)) {
+                            options.push(line);
+                        } else if (line.toLowerCase().startsWith('respuesta correcta:')) {
+                            correctAnswer = line.substring(18).trim().toLowerCase();
+                        } else if (line.toLowerCase().startsWith('explicación:')) {
+                            explanation = line.substring(12).trim();
+                        }
+                    }
+
+                    if (question && options.length >= 4) {
+                        questions.push({ question, options, correctAnswer, explanation });
+                    }
+                }
+
+                return questions;
+            },
+
+            updateStats: () => {
+                const total = state.questions.length;
+                const answered = state.submittedQuestions.size;
+                const correct = Array.from(state.submittedQuestions).filter(idx => 
+                    state.userAnswers[idx] === state.questions[idx]?.correctAnswer
+                ).length;
+                const accuracy = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+
+                document.getElementById('totalQuestions').textContent = total;
+                document.getElementById('answeredQuestions').textContent = answered;
+                document.getElementById('correctAnswers').textContent = correct;
+                document.getElementById('accuracyRate').textContent = accuracy + '%';
+                document.getElementById('statsBar').style.display = total > 0 ? 'grid' : 'none';
+            },
+
+            // Función mejorada para limpiar completamente el texto de markdown y caracteres especiales
+            cleanMarkdown: (text) => {
+                if (!text) return '';
+                
+                return text
+                    // Eliminar todos los tipos de énfasis markdown
+                    .replace(/\*\*\*([^*]+)\*\*\*/g, '$1') // ***texto***
+                    .replace(/\*\*([^*]+)\*\*/g, '$1') // **texto**
+                    .replace(/\*([^*]+)\*/g, '$1') // *texto*
+                    .replace(/_{3}([^_]+)_{3}/g, '$1') // ___texto___
+                    .replace(/_{2}([^_]+)_{2}/g, '$1') // __texto__
+                    .replace(/_([^_]+)_/g, '$1') // _texto_
+                    .replace(/`{3}[^`]*`{3}/g, '') // ```código```
+                    .replace(/`([^`]+)`/g, '$1') // `código`
+                    
+                    // Eliminar encabezados
+                    .replace(/^#{1,6}\s*/gm, '')
+                    
+                    // Normalizar listas a viñetas simples
+                    .replace(/^[-*+]\s+/gm, '• ')
+                    .replace(/^\d+\.\s+/gm, '')
+                    
+                    // Eliminar links e imágenes
+                    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+                    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+                    
+                    // Eliminar citas y separadores
+                    .replace(/^>\s?/gm, '')
+                    .replace(/^[-=]{3,}/gm, '')
+                    .replace(/~{2}([^~]+)~{2}/g, '$1') // ~~tachado~~
+                    
+                    // Limpiar espacios múltiples y saltos de línea
+                    .replace(/\n{3,}/g, '\n\n')
+                    .replace(/\t/g, '    ')
+                    .replace(/ {2,}/g, ' ')
+                    
+                    // Eliminar caracteres especiales problemáticos
+                    .replace(/[<>]/g, '')
+                    .replace(/&nbsp;/g, ' ')
+                    
+                    .trim();
+            }
+        };
+
+        // MANEJO DE PREGUNTAS
+        const questionManager = {
+            render: () => {
+                const container = document.getElementById('questionsContainer');
+                
+                if (state.questions.length === 0) {
+                    container.innerHTML = '<div class="alert alert-error">No se pudieron generar preguntas válidas.</div>';
+                    return;
+                }
+
+                container.innerHTML = state.questions.map((q, index) => `
+                    <div class="question-card" data-index="${index}" id="card-${index}">
+                        <div class="question-number">Pregunta ${index + 1}</div>
+                        <div class="question-text">${q.question}</div>
+                        <div class="options-list" id="options-${index}">
+                            ${q.options.map(option => {
+                                const letter = option.charAt(0).toLowerCase();
+                                return `
+                                    <div class="option-item" 
+                                         data-option="${letter}" 
+                                         onclick="handleOptionSelect(${index}, '${letter}')">
+                                        ${option}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div class="answer-actions" id="actions-${index}">
+                            <button class="btn-submit" onclick="submitAnswer(${index})">
+                                Verificar Respuesta
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Limpiar mensajes de alerta
+                document.getElementById('messageContainer').innerHTML = '';
+            },
+
+            selectOption: (questionIndex, optionLetter) => {
+                if (state.submittedQuestions.has(questionIndex)) return;
+
+                state.userAnswers[questionIndex] = optionLetter;
+                
+                const card = document.getElementById(`card-${questionIndex}`);
+                card.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
+                card.querySelector(`[data-option="${optionLetter}"]`).classList.add('selected');
+            },
+
+            submit: async (questionIndex) => {
+                const userAnswer = state.userAnswers[questionIndex];
+                if (!userAnswer) {
+                    utils.showMessage('error', '⚠️ Selecciona una respuesta antes de verificar.', 3000);
+                    return;
+                }
+
+                const question = state.questions[questionIndex];
+                const isCorrect = userAnswer === question.correctAnswer;
+                
+                state.submittedQuestions.add(questionIndex);
+                
+                // Deshabilitar opciones
+                const card = document.getElementById(`card-${questionIndex}`);
+                card.classList.add('completed');
+                card.querySelectorAll('.option-item').forEach(opt => opt.classList.add('disabled'));
+                
+                // Marcar respuestas
+                card.querySelectorAll('.option-item').forEach(opt => {
+                    const letter = opt.getAttribute('data-option');
+                    if (letter === question.correctAnswer) {
+                        opt.classList.add('correct');
+                    } else if (letter === userAnswer && !isCorrect) {
+                        opt.classList.add('incorrect');
+                    }
+                });
+
+                // Mostrar feedback
+                await questionManager.showFeedback(questionIndex, isCorrect);
+                utils.updateStats();
+            },
+
+            showFeedback: async (questionIndex, isCorrect) => {
+                const question = state.questions[questionIndex];
+                const actionsDiv = document.getElementById(`actions-${questionIndex}`);
+
+                // Loading
+                actionsDiv.innerHTML = '<div class="loading-spinner"></div>';
+
+                try {
+                    let feedbackText = question.explanation || 'Sin explicación disponible.';
+                    
+                    // Obtener feedback del backend
+                    try {
+                        const response = await fetch(`${CONFIG.API_URL}/get-feedback`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                question: `${question.question}\n${question.options.join('\n')}`,
+                                answer: question.options.find(opt => opt.charAt(0).toLowerCase() === state.userAnswers[questionIndex])
+                            })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.feedback) {
+                                feedbackText = data.feedback;
+                            }
+                        }
+                    } catch (apiError) {
+                        console.log('Usando explicación local');
+                    }
+
+                    // Limpiar texto completamente
+                    const cleanFeedback = utils.cleanMarkdown(feedbackText);
+
+                    // Construir feedback conciso
+                    const resultMessage = isCorrect ? '✅ ¡Respuesta Correcta!' : '❌ Respuesta Incorrecta';
+                    const errorAnalysis = isCorrect ? '' : `\n\nQué falló: ${getErrorAnalysis(state.userAnswers[questionIndex])}`;
+                    const improvementTip = `\n\nCómo mejorar: ${getImprovementTip(document.getElementById('competenciaSelect').value)}`;
+                    const motivation = isCorrect 
+                        ? '\n\n¡Excelente! Sigue practicando.' 
+                        : '\n\n💪 Cada error es una oportunidad. Analiza y aprende.';
+
+                    actionsDiv.innerHTML = `
+                        <div class="feedback-box ${isCorrect ? 'success' : 'error'}">
+                            <div class="feedback-title">${resultMessage}</div>
+                            <div class="feedback-content">
+                                ${cleanFeedback}${errorAnalysis}${improvementTip}${motivation}
+                            </div>
+                        </div>
+                    `;
+
+                } catch (error) {
+                    // Fallback minimalista
+                    actionsDiv.innerHTML = `
+                        <div class="feedback-box ${isCorrect ? 'success' : 'error'}">
+                            <div class="feedback-title">${isCorrect ? '✅ ¡Correcto!' : '❌ Incorrecto'}</div>
+                            <div class="feedback-content">${utils.cleanMarkdown(question.explanation)}</div>
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        // FUNCIONES GLOBALES
+        window.handleOptionSelect = (questionIndex, optionLetter) => {
+            questionManager.selectOption(questionIndex, optionLetter);
+        };
+
+        window.submitAnswer = async (questionIndex) => {
+            await questionManager.submit(questionIndex);
+        };
+
+        window.generateQuestions = async () => {
+            const competencia = document.getElementById('competenciaSelect').value;
+            const dificultad = document.getElementById('dificultadSelect').value;
+            const numQuestions = parseInt(document.getElementById('numQuestionsInput').value);
+            const useCustomKnowledge = document.getElementById('customKnowledgeSelect').value === 'true';
+
+            // Validaciones
+            if (!competencia) {
+                utils.showMessage('error', '⚠️ Selecciona una competencia para continuar.');
+                return;
+            }
+
+            if (numQuestions < CONFIG.MIN_QUESTIONS || numQuestions > CONFIG.MAX_QUESTIONS) {
+                utils.showMessage('error', `⚠️ El número de preguntas debe estar entre ${CONFIG.MIN_QUESTIONS} y ${CONFIG.MAX_QUESTIONS}.`);
+                return;
+            }
+
+            // Resetear estado
+            state.questions = [];
+            state.userAnswers = {};
+            state.submittedQuestions.clear();
+            state.rawQuestionsText = '';
+
+            // UI Loading
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Generando preguntas...';
+            utils.showMessage('info', '🤖 La IA está creando tus preguntas personalizadas...', 0);
+
+            try {
+                const response = await fetch(`${CONFIG.API_URL}/generate-question`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        competencia, num_questions: numQuestions, dificultad, use_custom_knowledge: useCustomKnowledge,
+                        previous_questions: Array.from(state.generatedQuestionIds) // Enviar IDs previos para evitar repeticiones
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.questions) {
+                    state.rawQuestionsText = data.questions;
+                    state.questions = utils.parseQuestions(data.questions);
+                    
+                    // Guardar IDs de preguntas generadas para evitar repeticiones futuras
+                    if (data.question_ids) {
+                        data.question_ids.forEach(id => state.generatedQuestionIds.add(id));
+                    }
+                    
+                    // Mostrar resultados
+                    document.getElementById('resultsSection').style.display = 'block';
+                    questionManager.render();
+                    utils.updateStats();
+                    
+                    // Scroll suave
+                    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+                    
+                    utils.showMessage('success', `🎉 ¡${state.questions.length} preguntas generadas! Empieza a practicar.`, 3000);
+                    
+                    console.log('✅ Preguntas generadas:', data);
+                } else {
+                    utils.showMessage('error', `❌ ${data.error || 'Error desconocido.'}`);
+                }
+            } catch (error) {
+                console.error('❌ Error de conexión:', error);
+                utils.showMessage('error', '🔌 Error de conexión. Verifica que el backend esté corriendo.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Generar Preguntas';
+            }
+        };
+
+        window.exportQuestions = () => {
+            if (!state.rawQuestionsText) {
+                utils.showMessage('error', '⚠️ No hay preguntas para exportar.', 3000);
+                return;
+            }
+
+            const blob = new Blob([state.rawQuestionsText], {type: 'text/plain;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `icfes_practica_${document.getElementById('competenciaSelect').value}_${new Date().getTime()}.txt`;
+            link.click();
+            utils.showMessage('success', '💾 Exportado correctamente.', 3000);
+        };
+
+        window.printQuestions = () => {
+            if (!state.rawQuestionsText) {
+                utils.showMessage('error', '⚠️ No hay preguntas para imprimir.', 3000);
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Práctica ICFES - ${document.getElementById('competenciaSelect').value}</title>
+                    <style>
+                        body { font-family: 'Inter', sans-serif; margin: 40px; line-height: 1.6; color: #000; }
+                        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #667eea; padding-bottom: 20px; }
+                        .question { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+                        .question-text { font-weight: 600; margin-bottom: 15px; font-size: 16px; }
+                        .options { margin-left: 20px; margin-bottom: 15px; }
+                        .correct { color: #10b981; font-weight: bold; }
+                        pre { white-space: pre-wrap; font-family: inherit; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Práctica ICFES Pro</h1>
+                        <p><strong>Competencia:</strong> ${document.getElementById('competenciaSelect').value}</p>
+                        <p><strong>Dificultad:</strong> ${document.getElementById('dificultadSelect').value}</p>
+                        <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                    </div>
+                    <pre>${state.rawQuestionsText}</pre>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        };
+
+        window.resetGenerator = () => {
+            // Resetear estado
+            state.questions = [];
+            state.userAnswers = {};
+            state.submittedQuestions.clear();
+            state.rawQuestionsText = '';
+
+            // Resetear UI
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('questionsContainer').innerHTML = '';
+            document.getElementById('messageContainer').innerHTML = '';
+            document.getElementById('competenciaSelect').value = '';
+            document.getElementById('numQuestionsInput').value = '5';
+            document.getElementById('dificultadSelect').value = 'medio';
+            document.getElementById('customKnowledgeSelect').value = 'true';
+            
+            utils.updateStats();
+            utils.showMessage('success', '🔄 Generador reiniciado. ¡Listo para una nueva práctica!', 3000);
+        };
+
+        // FUNCIONES AUXILIARES
+        function getErrorAnalysis(selectedLetter) {
+            const errorPatterns = {
+                'a': 'Elegiste la primera opción sin analizar todas.',
+                'b': 'Te confundiste con una opción parcialmente correcta.',
+                'c': 'Caíste en un distractor diseñado para confundir.',
+                'd': 'Elegiste por descarte sin verificar bien cada alternativa.'
+            };
+            return errorPatterns[selectedLetter] || 'Necesitas reforzar la comprensión del tema.';
+        }
+
+        function getImprovementTip(competencia) {
+            const tips = {
+                'Lectura Crítica': 'Identifica ideas principales e inferencias en textos complejos.',
+                'Matemáticas': 'Revisa fundamentos y practica problemas paso a paso.',
+                'Ciencias Naturales': 'Enfócate en conceptos clave y relaciones causa-efecto.',
+                'Ciencias Sociales': 'Conecta eventos históricos con su impacto social.',
+                'Inglés': 'Practica comprensión lectora y vocabulario académico.',
+                'Competencia Ciudadana': 'Reflexiona sobre derechos y participación democrática.',
+                'Física': 'Domina las leyes fundamentales y su aplicación práctica.',
+                'Química': 'Memoriza reacciones básicas y estructura de la materia.',
+                'Biología': 'Enfócate en procesos celulares, genética y ecosistemas.',
+                'Historia': 'Crea líneas de tiempo para conectar eventos causales.',
+                'Geografía': 'Estudia mapas, regiones y procesos geográficos.'
+            };
+            return tips[competencia] || 'Revisa los conceptos fundamentales y practica más.';
+        }
+
+        // INICIALIZACIÓN
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('competenciaSelect').focus();
+            utils.updateStats();
+        });
+    </script>
+</body>
+</html>
