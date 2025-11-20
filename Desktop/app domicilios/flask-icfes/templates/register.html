@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Registrar</title></head>
+<body>
+  <h2>Registrar estudiante</h2>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+      {% for cat,msg in messages %}
+        <li><strong>{{ cat }}:</strong> {{ msg }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post">
+    {{ form.csrf_token }}
+    <label>Nombre</label><br>
+    {{ form.nombre }}<br>
+    <label>Cédula</label><br>
+    {{ form.cedula }}<br><br>
+    <button type="submit">Registrar</button>
+  </form>
+  <a href="{{ url_for('index') }}">Volver</a>
+</body>
+</html>

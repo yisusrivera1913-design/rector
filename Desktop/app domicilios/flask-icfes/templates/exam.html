@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Examen ICFES</title></head>
+<body>
+  <h2>{{ exam.title }}</h2>
+  <form method="post" action="{{ url_for('student.submit_exam', exam_id=exam.id) }}">
+    {% for q in questions %}
+    <div>
+      <p><strong>{{ q.question_text }}</strong></p>
+      {% for option in q.options %}
+      <label>
+        <input type="radio" name="q_{{ q.id }}" value="{{ option }}" required> {{ option }}
+      </label><br>
+      {% endfor %}
+    </div>
+    <hr>
+    {% endfor %}
+    <button type="submit">Enviar Examen</button>
+  </form>
+  <a href="{{ url_for('student.student_panel') }}">Volver al Panel</a>
+</body>
+</html>

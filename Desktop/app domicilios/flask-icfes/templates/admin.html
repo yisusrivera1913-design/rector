@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Admin</title></head>
+<body>
+  <h2>Admin Panel</h2>
+  <div id="status-message" style="display: none;"></div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+      {% for cat,msg in messages %}
+        <li class="{{ cat }}">{{ msg }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  {% if not admin %}
+    <form method="post" action="{{ url_for('admin.admin_login') }}">
+      {{ form.csrf_token }}
+      <label>Clave admin:</label>
+      <input type="password" name="password" required>
+      <button type="submit">Entrar</button>
+    </form>
+  {% else %}
+    <p><a href="{{ url_for('logout') }}">Cerrar sesión admin</a></p>
+    <h3>Estudiantes</h3>
+    <table border="1">
+      <tr><th>Nombre</th><th>Cédula</th><th>Acceso</th><th>Acción</th></tr>
+      {% for u in users %}
+      <tr data-user-id="{{ u.id }}">
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.cedula_descifrada }}</td>
+        <td class="access-status">{{ u.tiene_acceso }}</td>
+        <td>
+          <form method="post" action="{{ url_for('admin.toggle_access', user_id=u.id) }}" class="toggle-form">
+            <button type="submit">{{ "Retirar" if u.tiene_acceso else "Dar acceso" }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const forms = document.querySelectorAll('.toggle-form');
+      const statusDiv = document.getElementById('status-message');
+
+      forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          const button = this.querySelector('button');
+          const action = button.textContent === 'Dar acceso' ? 'dar acceso' : 'retirar acceso';
+
+          if (!confirm(`¿Estás seguro de que quieres ${action} a este usuario?`)) {
+            return;
+          }
+
+          const formData = new FormData(this);
+          const row = this.closest('tr');
+          const accessStatus = row.querySelector('.access-status');
+
+          button.disabled = true;
+          button.textContent = 'Guardando...';
+
+          fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Update button text
+              button.textContent = data.new_state ? 'Retirar' : 'Dar acceso';
+              // Update access status display
+              accessStatus.textContent = data.new_state;
+              // Show "Guardado" message
+              statusDiv.textContent = data.message;
+              statusDiv.style.display = 'block';
+              statusDiv.className = 'success';
+              setTimeout(() => {
+                statusDiv.style.display = 'none';
+              }, 2000);
+            } else {
+              statusDiv.textContent = data.message;
+              statusDiv.style.display = 'block';
+              statusDiv.className = 'error';
+              setTimeout(() => {
+                statusDiv.style.display = 'none';
+              }, 3000);
+              button.textContent = data.new_state ? 'Retirar' : 'Dar acceso';
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            statusDiv.textContent = 'Error al guardar cambios';
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'error';
+            setTimeout(() => {
+              statusDiv.style.display = 'none';
+            }, 3000);
+            button.textContent = data.new_state ? 'Retirar' : 'Dar acceso';
+          })
+          .finally(() => {
+            button.disabled = false;
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

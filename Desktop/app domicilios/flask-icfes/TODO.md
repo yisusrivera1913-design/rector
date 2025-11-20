@@ -1,0 +1,24 @@
+# TODO for Flask ICFES Project Completion
+
+- [x] Create flask-icfes directory
+- [x] Create requirements.txt
+- [x] Create .env.example
+- [x] Create supabase_client.py
+- [x] Create encryption.py
+- [x] Create app.py
+- [x] Create templates directory
+- [x] Create templates/index.html
+- [x] Create templates/register.html
+- [x] Create templates/login.html
+- [x] Create templates/admin.html
+- [x] Create templates/student_panel.html
+- [x] Create static directory
+- [x] Add .gitignore file to exclude sensitive files (.env, __pycache__, etc.)
+- [x] Enhance database with more Supabase tables (e.g., exams, questions, results)
+- [x] Create create_tables.sql script for Supabase setup
+- [x] Implement core student functionality in student_panel (e.g., ICFES question generator/simulator)
+- [x] Add new routes in app.py for student tools
+- [ ] Improve templates with basic CSS for better visibility
+- [x] Add security prescriptions document (README.md with deployment guidelines for platforms like Heroku, Vercel)
+- [ ] Add error handling and logging in app.py
+- [ ] Test locally and deploy to verify security

@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICFES Pro - Práctica Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* VARIABLES Y RESET MEJORADO */
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --bg: #0a0a0f;
+            --card: rgba(255, 255, 255, 0.03);
+            --text: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            
+            /* Tamaños fluidos con clamp() */
+            --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+            --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+            --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+            --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+            --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+            --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+            --text-3xl: clamp(1.875rem, 1.6rem + 1.375vw, 2.5rem);
+            --text-4xl: clamp(2.25rem, 1.9rem + 1.75vw, 3rem);
+            --text-5xl: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+            
+            /* Espaciado fluido */
+            --space-1: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
+            --space-2: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+            --space-3: clamp(0.75rem, 0.6rem + 0.75vw, 1rem);
+            --space-4: clamp(1rem, 0.8rem + 1vw, 1.25rem);
+            --space-5: clamp(1.25rem, 1rem + 1.25vw, 1.5rem);
+            --space-6: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+            --space-8: clamp(2rem, 1.6rem + 2vw, 2.5rem);
+            --space-10: clamp(2.5rem, 2rem + 2.5vw, 3rem);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* BACKGROUND ANIMADO - RESPONSIVE */
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(249, 147, 251, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(102, 126, 234, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(102, 126, 234, 0.03) 1px, transparent 1px);
+            background-size: clamp(30px, 8vw, 50px) clamp(30px, 8vw, 50px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* NAVBAR - RESPONSIVE */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            padding: var(--space-3) var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            min-height: 60px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: clamp(36px, 8vw, 45px);
+            height: clamp(36px, 8vw, 45px);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.25rem, 1rem + 2vw, 1.5rem);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            font-size: clamp(1.125rem, 1rem + 1vw, 1.5rem);
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, #a8b2d1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: var(--space-2) var(--space-3);
+            border-radius: 8px;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-3px);
+            border-color: var(--primary);
+        }
+
+        /* MAIN CONTAINER - RESPONSIVE */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 80px auto var(--space-6);
+            padding: 0 var(--space-4);
+            width: 100%;
+        }
+
+        .hero-header {
+            text-align: center;
+            margin-bottom: var(--space-8);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            padding: var(--space-1) var(--space-3);
+            border-radius: 50px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: var(--text-xs);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: var(--space-4);
+        }
+
+        .hero-title {
+            font-size: var(--text-5xl);
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: var(--space-3);
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: var(--text-lg);
+            color: var(--text-muted);
+            max-width: min(90%, 700px);
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* GENERATOR SECTION - RESPONSIVE */
+        .generator-section {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: clamp(16px, 2vw, 28px);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .generator-section:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: var(--text-xs);
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: var(--space-2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-select, .form-input {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: var(--space-3);
+            border-radius: 12px;
+            font-size: var(--text-base);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+            min-height: 50px;
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-select option {
+            background: #1a1a1a;
+            color: var(--text);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: var(--space-4) var(--space-6);
+            border-radius: clamp(12px, 1.5vw, 16px);
+            font-size: var(--text-base);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+            box-shadow: var(--shadow);
+            min-height: 56px;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* RESULTS SECTION - RESPONSIVE */
+        .results-section {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: clamp(16px, 2vw, 20px);
+            padding: var(--space-6);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-bar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: var(--space-4);
+            margin-bottom: var(--space-6);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-3);
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: var(--space-2);
+        }
+
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: var(--space-1);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+            flex-wrap: wrap;
+            gap: var(--space-4);
+        }
+
+        .results-title {
+            font-size: var(--text-2xl);
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .results-actions {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: var(--space-2) var(--space-3);
+            border-radius: 10px;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-height: 44px;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        /* QUESTIONS - RESPONSIVE */
+        .questions-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-5);
+        }
+
+        .question-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: clamp(12px, 1.5vw, 16px);
+            padding: var(--space-5);
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .question-card.completed {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .question-number {
+            font-size: var(--text-base);
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: var(--space-3);
+        }
+
+        .question-text {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: var(--space-4);
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+
+        .option-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: var(--space-3);
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: var(--text-base);
+            line-height: 1.4;
+        }
+
+        .option-item:hover:not(.disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateX(5px);
+        }
+
+        .option-item.selected {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .option-item.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .option-item.correct {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+            font-weight: 700;
+        }
+
+        .option-item.incorrect {
+            background: rgba(239, 68, 68, 0.2) !important;
+            border-color: var(--error) !important;
+            color: var(--error) !important;
+        }
+
+        /* FEEDBACK - RESPONSIVE */
+        .feedback-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: var(--space-4);
+            margin-top: var(--space-3);
+            animation: slideIn 0.5s ease;
+        }
+
+        .feedback-box.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--error);
+        }
+
+        .feedback-title {
+            font-size: var(--text-base);
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .feedback-box.success .feedback-title {
+            color: var(--success);
+        }
+
+        .feedback-box.error .feedback-title {
+            color: var(--error);
+        }
+
+        .feedback-content {
+            color: var(--text);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-size: var(--text-sm);
+        }
+
+        /* ALERTS - RESPONSIVE */
+        .alert {
+            padding: var(--space-3) var(--space-4);
+            border-radius: 12px;
+            margin: var(--space-4) 0;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+            font-size: var(--text-sm);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-info {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* LOADING - RESPONSIVE */
+        .loading-spinner {
+            width: clamp(40px, 10vw, 50px);
+            height: clamp(40px, 10vw, 50px);
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--space-3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* BREAKPOINTS RESPONSIVE */
+
+        /* Tablets y pantallas medianas */
+        @media (max-width: 1024px) {
+            .main-container {
+                padding: 0 var(--space-4);
+            }
+            
+            .form-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: var(--space-4);
+            }
+        }
+
+        /* Tablets pequeñas y móviles grandes */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: var(--space-3) var(--space-4);
+            }
+            
+            .hero-title {
+                line-height: 1.1;
+            }
+            
+            .hero-subtitle {
+                max-width: 95%;
+            }
+            
+            .generator-section {
+                padding: var(--space-5);
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-4);
+            }
+            
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-3);
+            }
+            
+            .results-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn-action {
+                flex: 1;
+                text-align: center;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-3);
+            }
+        }
+
+        /* Móviles medianos */
+        @media (max-width: 480px) {
+            .main-container {
+                margin-top: 70px;
+            }
+            
+            .hero-header {
+                margin-bottom: var(--space-6);
+            }
+            
+            .generator-section {
+                padding: var(--space-4);
+                border-radius: 16px;
+            }
+            
+            .question-card {
+                padding: var(--space-4);
+            }
+            
+            .btn-back {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .logo-text {
+                display: none; /* Ocultar texto en pantallas muy pequeñas */
+            }
+            
+            .generate-btn {
+                max-width: 100%;
+                min-height: 50px;
+            }
+        }
+
+        /* Móviles pequeños */
+        @media (max-width: 375px) {
+            :root {
+                --text-base: 0.875rem;
+                --text-lg: 1rem;
+            }
+            
+            .main-container {
+                padding: 0 var(--space-3);
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-2);
+            }
+            
+            .question-text {
+                font-size: var(--text-base);
+            }
+            
+            .option-item {
+                padding: var(--space-2);
+            }
+        }
+
+        /* Mejoras para modo landscape en móviles */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .navbar {
+                min-height: 50px;
+                padding: var(--space-2) var(--space-4);
+            }
+            
+            .main-container {
+                margin-top: 60px;
+            }
+            
+            .hero-header {
+                margin-bottom: var(--space-4);
+            }
+            
+            .generator-section {
+                padding: var(--space-4);
+            }
+        }
+
+        /* Mejoras de accesibilidad táctil */
+        @media (hover: none) {
+            .option-item:hover:not(.disabled) {
+                transform: none;
+            }
+            
+            .btn-back:hover,
+            .btn-action:hover,
+            .btn-submit:hover:not(:disabled) {
+                transform: none;
+            }
+        }
+
+        /* Reducción de motion para accesibilidad */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animated"></div>
+    <div class="grid-overlay"></div>
+
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo-icon">🎓</div>
+            <div class="logo-text">ICFES Pro</div>
+        </div>
+        <button class="btn-back" onclick="window.location.href='/inicio'">← Volver a inicio</button>
+    </nav>
+
+    <div class="main-container">
+        <div class="hero-header">
+            <div class="hero-badge">Práctica Inteligente con IA</div>
+            <h1 class="hero-title">Generador de Preguntas ICFES</h1>
+            <p class="hero-subtitle">Responde dinámicamente, recibe retroalimentación detallada y mejora tu rendimiento</p>
+        </div>
+
+        <div class="generator-section">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Competencia</label>
+                    <select class="form-select" id="competenciaSelect">
+                        <option value="">Selecciona una competencia</option>
+                        <option value="Lectura Crítica">Lectura Crítica</option>
+                        <option value="Matemáticas">Matemáticas</option>
+                        <option value="Ciencias Naturales">Ciencias Naturales</option>
+                        <option value="Ciencias Sociales">Ciencias Sociales</option>
+                        <option value="Inglés">Inglés</option>
+                        <option value="Competencia Ciudadana">Competencia Ciudadana</option>
+                        <option value="Física">Física</option>
+                        <option value="Química">Química</option>
+                        <option value="Biología">Biología</option>
+                        <option value="Historia">Historia</option>
+                        <option value="Geografía">Geografía</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dificultad</label>
+                    <select class="form-select" id="dificultadSelect">
+                        <option value="facil">Fácil</option>
+                        <option value="medio" selected>Medio</option>
+                        <option value="avanzado">Avanzado</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Número de Preguntas</label>
+                    <input type="number" class="form-input" id="numQuestionsInput" min="1" max="20" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Conocimiento Personalizado</label>
+                    <select class="form-select" id="customKnowledgeSelect">
+                        <option value="true" selected>Sí (Recomendado)</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="generate-btn" id="generateBtn" onclick="generateQuestions()">
+                🚀 Generar Preguntas
+            </button>
+
+            <div id="messageContainer"></div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="stats-bar" id="statsBar" style="display: none;">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalQuestions">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="answeredQuestions">0</div>
+                    <div class="stat-label">Respondidas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="correctAnswers">0</div>
+                    <div class="stat-label">Correctas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accuracyRate">0%</div>
+                    <div class="stat-label">Precisión</div>
+                </div>
+            </div>
+
+            <div class="results-header">
+                <h2 class="results-title">📝 Preguntas para Practicar</h2>
+                <div class="results-actions">
+                    <button class="btn-action" onclick="exportQuestions()">💾 Exportar</button>
+                    <button class="btn-action" onclick="printQuestions()">🖨️ Imprimir</button>
+                    <button class="btn-action" onclick="resetGenerator()">🔄 Nuevo Set</button>
+                </div>
+            </div>
+
+            <div class="questions-container" id="questionsContainer"></div>
+
+            <!-- NUEVO: Botón global para verificar todas las respuestas -->
+            <div id="globalSubmitContainer" style="display: none; margin-top: var(--space-6); text-align: center;">
+                <button class="generate-btn" id="submitAllBtn" onclick="submitAllAnswers()">
+                    ✅ Verificar Todas las Respuestas
+                </button>
+            </div>
+
+            <!-- NUEVO: Panel de resultados globales -->
+            <div id="globalResultsPanel" style="display: none; margin-top: var(--space-6);">
+                <h3 style="font-size: var(--text-2xl); margin-bottom: var(--space-4); text-align: center;">📊 Resultados del Intento</h3>
+                <div id="globalResultsTable"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN CENTRALIZADA
+        const CONFIG = {
+            API_URL: window.API_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                ? 'http://127.0.0.1:5000' 
+                : 'https://icfes-ia.onrender.com'),
+            MAX_QUESTIONS: 20,
+            MIN_QUESTIONS: 1
+        };
+
+        // ESTADO DE LA APLICACIÓN
+        const state = {
+            questions: [],
+            userAnswers: {},
+            submittedQuestions: new Set(),
+            rawQuestionsText: '',
+            generatedQuestionIds: new Set()
+        };
+
+        // UTILIDADES
+        const utils = {
+            showMessage: (type, message, duration = 5000) => {
+                const container = document.getElementById('messageContainer');
+                container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                if (duration > 0) {
+                    setTimeout(() => container.innerHTML = '', duration);
+                }
+            },
+
+            parseQuestions: (rawText) => {
+                if (!rawText) return [];
+                
+                const blocks = rawText.split(/\n{2,}/).filter(block => block.trim());
+                const questions = [];
+
+                for (const block of blocks) {
+                    const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+                    let question = '', options = [], correctAnswer = '', explanation = '';
+
+                    for (const line of lines) {
+                        if (line.toLowerCase().startsWith('pregunta:')) {
+                            question = line.substring(9).trim();
+                        } else if (/^[a-d]\)/i.test(line)) {
+                            options.push(line);
+                        } else if (line.toLowerCase().startsWith('respuesta correcta:')) {
+                            // Extraer la letra correcta, manejando casos con dos puntos extra
+                            const match = line.match(/respuesta correcta:\s*:?\s*([a-d])/i);
+                            if (match) {
+                                correctAnswer = match[1].toLowerCase();
+                            }
+                        } else if (line.toLowerCase().startsWith('explicación:')) {
+                            explanation = line.substring(12).trim();
+                        }
+                    }
+
+                    if (question && options.length >= 4) {
+                        questions.push({ question, options, correctAnswer, explanation });
+                    }
+                }
+
+                return questions;
+            },
+
+            updateStats: () => {
+                const total = state.questions.length;
+                const answered = Object.keys(state.userAnswers).length; // CAMBIO: Contar respuestas seleccionadas
+                document.getElementById('totalQuestions').textContent = total;
+                document.getElementById('answeredQuestions').textContent = answered;
+                // Las stats de correctas y precisión se actualizarán después de enviar
+                const statsBar = document.getElementById('statsBar');
+                statsBar.style.display = total > 0 ? 'grid' : 'none';
+            },
+
+            cleanMarkdown: (text) => {
+                if (!text) return '';
+                return text
+                    .replace(/\*\*\*([^*]+)\*\*\*/g, '$1')
+                    .replace(/\*\*([^*]+)\*\*/g, '$1')
+                    .replace(/\*([^*]+)\*/g, '$1')
+                    .replace(/_{3}([^_]+)_{3}/g, '$1')
+                    .replace(/_{2}([^_]+)_{2}/g, '$1')
+                    .replace(/_([^_]+)_/g, '$1')
+                    .replace(/`{3}[^`]*`{3}/g, '')
+                    .replace(/`([^`]+)`/g, '$1')
+                    .replace(/^#{1,6}\s*/gm, '')
+                    .replace(/^[-*+]\s+/gm, '• ')
+                    .replace(/^\d+\.\s+/gm, '')
+                    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+                    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+                    .replace(/^>\s?/gm, '')
+                    .replace(/^[-=]{3,}/gm, '')
+                    .replace(/~{2}([^~]+)~{2}/g, '$1')
+                    .replace(/\n{3,}/g, '\n\n')
+                    .replace(/\t/g, '    ')
+                    .replace(/ {2,}/g, ' ')
+                    .replace(/[<>]/g, '')
+                    .replace(/&nbsp;/g, ' ')
+                    .trim();
+            }
+        };
+
+        // MANEJO DE PREGUNTAS
+        const questionManager = {
+            render: () => {
+                const container = document.getElementById('questionsContainer');
+                
+                if (state.questions.length === 0) {
+                    container.innerHTML = '<div class="alert alert-error">No se pudieron generar preguntas válidas.</div>';
+                    return;
+                }
+
+                container.innerHTML = state.questions.map((q, index) => `
+                    <div class="question-card" data-index="${index}" id="card-${index}">
+                        <div class="question-number">Pregunta ${index + 1}</div>
+                        <div class="question-text">${q.question}</div>
+                        <div class="options-list" id="options-${index}">
+                            ${q.options.map(option => {
+                                const letter = option.charAt(0).toLowerCase();
+                                return `
+                                    <div class="option-item" 
+                                         data-option="${letter}" 
+                                         onclick="handleOptionSelect(${index}, '${letter}')">
+                                        ${option}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <!-- NUEVO: Contenedor para feedback después de enviar -->
+                        <div class="feedback-container" id="feedback-${index}" style="display: none; margin-top: var(--space-3);"></div>
+                    </div>
+                `).join('');
+
+                document.getElementById('messageContainer').innerHTML = '';
+                
+                // CAMBIO: Mostrar botón global
+                document.getElementById('globalSubmitContainer').style.display = 'block';
+                document.getElementById('globalResultsPanel').style.display = 'none';
+                document.getElementById('globalResultsTable').innerHTML = '';
+            },
+
+            selectOption: (questionIndex, optionLetter) => {
+                // CAMBIO: No auto-enviar, solo seleccionar
+                if (state.submittedQuestions.has(questionIndex)) return;
+
+                state.userAnswers[questionIndex] = optionLetter;
+
+                const card = document.getElementById(`card-${questionIndex}`);
+                card.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
+                card.querySelector(`[data-option="${optionLetter}"]`).classList.add('selected');
+                
+                utils.updateStats(); // Actualizar contador de respondidas
+            },
+
+            // NUEVO: Método para mostrar feedback después de enviar todas
+            showFeedbackForAll: (results) => {
+                results.forEach(result => {
+                    const index = result.questionIndex;
+                    const question = state.questions[index];
+                    const isCorrect = result.isCorrect;
+                    
+                    // Deshabilitar opciones
+                    const card = document.getElementById(`card-${index}`);
+                    card.classList.add('completed');
+                    card.querySelectorAll('.option-item').forEach(opt => opt.classList.add('disabled'));
+                    
+                    // Marcar respuestas
+                    card.querySelectorAll('.option-item').forEach(opt => {
+                        const letter = opt.getAttribute('data-option');
+                        if (letter === question.correctAnswer) {
+                            opt.classList.add('correct');
+                        } else if (letter === result.userAnswer && !isCorrect) {
+                            opt.classList.add('incorrect');
+                        } else if (letter === result.userAnswer && isCorrect) {
+                            opt.classList.add('selected');
+                        }
+                    });
+                    
+                    // Mostrar feedback en el contenedor específico
+                    const feedbackContainer = document.getElementById(`feedback-${index}`);
+                    feedbackContainer.style.display = 'block';
+                    feedbackContainer.innerHTML = `
+                        <div class="feedback-box ${isCorrect ? 'success' : 'error'}">
+                            <div class="feedback-title">${isCorrect ? '✅ Correcto' : '❌ Incorrecto'}</div>
+                            <div class="feedback-content">
+                                <div class="feedback-section"><strong>Tu respuesta:</strong> ${result.userAnswer?.toUpperCase()}</div>
+                                <div class="feedback-section"><strong>Respuesta correcta:</strong> ${question.correctAnswer?.toUpperCase()}</div>
+                                <div class="feedback-section"><strong>Explicación:</strong><br>${utils.cleanMarkdown(result.feedback)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Actualizar stats finales
+                const total = results.length;
+                const correct = results.filter(r => r.isCorrect).length;
+                document.getElementById('correctAnswers').textContent = correct;
+                document.getElementById('accuracyRate').textContent = Math.round((correct / total) * 100) + '%';
+            }
+        };
+
+        // FUNCIONES GLOBALES
+        window.handleOptionSelect = (questionIndex, optionLetter) => {
+            questionManager.selectOption(questionIndex, optionLetter);
+        };
+
+        // NUEVO: Función para enviar todas las respuestas
+        window.submitAllAnswers = async () => {
+            if (state.questions.length === 0) return;
+            
+            const totalQuestions = state.questions.length;
+            const answeredQuestions = Object.keys(state.userAnswers).length;
+            
+            // Validar que se respondieron todas
+            if (answeredQuestions < totalQuestions) {
+                utils.showMessage('error', `⚠️ Responde todas las preguntas antes de verificar. Te faltan ${totalQuestions - answeredQuestions} preguntas.`, 4000);
+                // Scroll a la primera pregunta sin responder
+                for (let i = 0; i < totalQuestions; i++) {
+                    if (!state.userAnswers[i]) {
+                        document.getElementById(`card-${i}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        break;
+                    }
+                }
+                return;
+            }
+            
+            // Preparar datos para el backend
+            const submitData = state.questions.map((q, index) => ({
+                question: q.question,
+                options: q.options,
+                correctAnswer: q.correctAnswer,
+                userAnswer: state.userAnswers[index]
+            }));
+            
+            const btn = document.getElementById('submitAllBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Verificando respuestas...';
+            
+            try {
+                const response = await fetch(`${CONFIG.API_URL}/submit-all-answers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ questions: submitData })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Marcar todas como enviadas
+                    state.submittedQuestions = new Set(state.questions.map((_, i) => i));
+                    
+                    // Ocultar botón global
+                    document.getElementById('globalSubmitContainer').style.display = 'none';
+                    
+                    // Mostrar tabla de resultados
+                    renderGlobalResultsTable(data.summary, data.results);
+                    
+                    // Mostrar feedback debajo de cada pregunta
+                    questionManager.showFeedbackForAll(data.results);
+                    
+                    utils.showMessage('success', `🎉 Resultados listos! Precisión: ${data.summary.accuracy}%`, 5000);
+                } else {
+                    utils.showMessage('error', `❌ Error: ${data.error || 'No se pudieron verificar las respuestas'}`, 5000);
+                }
+            } catch (error) {
+                console.error('❌ Error enviando respuestas:', error);
+                utils.showMessage('error', '🔌 Error de conexión al verificar respuestas.', 5000);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✅ Verificar Todas las Respuestas';
+            }
+        };
+        
+        // NUEVO: Renderizar tabla de resultados globales
+        function renderGlobalResultsTable(summary, results) {
+            const tableHTML = `
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: var(--space-5); margin-bottom: var(--space-6);">
+                    <h4 style="font-size: var(--text-xl); margin-bottom: var(--space-4);">📈 Resumen del Intento</h4>
+                    <div class="stats-bar" style="display: grid; margin-bottom: var(--space-4);">
+                        <div class="stat-item">
+                            <div class="stat-value">${summary.total}</div>
+                            <div class="stat-label">Total Preguntas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${summary.correct}</div>
+                            <div class="stat-label">Correctas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${summary.incorrect}</div>
+                            <div class="stat-label">Incorrectas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${summary.accuracy}%</div>
+                            <div class="stat-label">Precisión</div>
+                        </div>
+                    </div>
+                    
+                    <h5 style="font-size: var(--text-lg); margin-bottom: var(--space-3);">Detalle por Pregunta:</h5>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: var(--text-sm);">
+                            <thead>
+                                <tr style="background: rgba(102, 126, 234, 0.1);">
+                                    <th style="padding: var(--space-2); border: 1px solid var(--border); text-align: left;">#</th>
+                                    <th style="padding: var(--space-2); border: 1px solid var(--border); text-align: left;">Estado</th>
+                                    <th style="padding: var(--space-2); border: 1px solid var(--border); text-align: left;">Tu Respuesta</th>
+                                    <th style="padding: var(--space-2); border: 1px solid var(--border); text-align: left;">Correcta</th>
+                                    <th style="padding: var(--space-2); border: 1px solid var(--border); text-align: left;">Tema</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${results.map(r => {
+                                    const q = state.questions[r.questionIndex];
+                                    return `
+                                        <tr style="background: ${r.isCorrect ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)'};">
+                                            <td style="padding: var(--space-2); border: 1px solid var(--border);">${r.questionIndex + 1}</td>
+                                            <td style="padding: var(--space-2); border: 1px solid var(--border);">
+                                                ${r.isCorrect ? '✅ Correcto' : '❌ Incorrecto'}
+                                            </td>
+                                            <td style="padding: var(--space-2); border: 1px solid var(--border);">
+                                                ${r.userAnswer?.toUpperCase()}
+                                            </td>
+                                            <td style="padding: var(--space-2); border: 1px solid var(--border);">
+                                                ${q.correctAnswer?.toUpperCase()}
+                                            </td>
+                                            <td style="padding: var(--space-2); border: 1px solid var(--border);">
+                                                ${q.question.substring(0, 50)}...
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('globalResultsTable').innerHTML = tableHTML;
+            document.getElementById('globalResultsPanel').style.display = 'block';
+        }
+
+        window.generateQuestions = async () => {
+            const competencia = document.getElementById('competenciaSelect').value;
+            const dificultad = document.getElementById('dificultadSelect').value;
+            const numQuestions = parseInt(document.getElementById('numQuestionsInput').value);
+            const useCustomKnowledge = document.getElementById('customKnowledgeSelect').value === 'true';
+
+            if (!competencia) {
+                utils.showMessage('error', '⚠️ Selecciona una competencia para continuar.');
+                return;
+            }
+
+            if (numQuestions < CONFIG.MIN_QUESTIONS || numQuestions > CONFIG.MAX_QUESTIONS) {
+                utils.showMessage('error', `⚠️ El número de preguntas debe estar entre ${CONFIG.MIN_QUESTIONS} y ${CONFIG.MAX_QUESTIONS}.`);
+                return;
+            }
+
+            state.questions = [];
+            state.userAnswers = {};
+            state.submittedQuestions.clear();
+            state.rawQuestionsText = '';
+
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Generando preguntas...';
+            utils.showMessage('info', '🤖 La IA está creando tus preguntas personalizadas...', 0);
+
+            try {
+                const response = await fetch(`${CONFIG.API_URL}/generate-question`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        competencia, num_questions: numQuestions, dificultad, use_custom_knowledge: useCustomKnowledge,
+                        previous_questions: Array.from(state.generatedQuestionIds)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.questions) {
+                    state.rawQuestionsText = data.questions;
+                    state.questions = utils.parseQuestions(data.questions);
+                    
+                    if (data.question_ids) {
+                        data.question_ids.forEach(id => state.generatedQuestionIds.add(id));
+                    }
+                    
+                    document.getElementById('resultsSection').style.display = 'block';
+                    questionManager.render();
+                    utils.updateStats();
+                    
+                    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+                    
+                    utils.showMessage('success', `🎉 ¡${state.questions.length} preguntas generadas! Empieza a practicar.`, 3000);
+                    
+                    console.log('✅ Preguntas generadas:', data);
+                } else {
+                    utils.showMessage('error', `❌ ${data.error || 'Error desconocido.'}`);
+                }
+            } catch (error) {
+                console.error('❌ Error de conexión:', error);
+                utils.showMessage('error', '🔌 Error de conexión. Verifica que el backend esté corriendo.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Generar Preguntas';
+            }
+        };
+
+        window.exportQuestions = () => {
+            if (!state.rawQuestionsText) {
+                utils.showMessage('error', '⚠️ No hay preguntas para exportar.', 3000);
+                return;
+            }
+
+            const blob = new Blob([state.rawQuestionsText], {type: 'text/plain;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `icfes_practica_${document.getElementById('competenciaSelect').value}_${new Date().getTime()}.txt`;
+            link.click();
+            utils.showMessage('success', '💾 Exportado correctamente.', 3000);
+        };
+
+        window.printQuestions = () => {
+            if (!state.rawQuestionsText) {
+                utils.showMessage('error', '⚠️ No hay preguntas para imprimir.', 3000);
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Práctica ICFES - ${document.getElementById('competenciaSelect').value}</title>
+                    <style>
+                        body { font-family: 'Inter', sans-serif; margin: 40px; line-height: 1.6; color: #000; }
+                        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #667eea; padding-bottom: 20px; }
+                        .question { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+                        .question-text { font-weight: 600; margin-bottom: 15px; font-size: 16px; }
+                        .options { margin-left: 20px; margin-bottom: 15px; }
+                        .correct { color: #10b981; font-weight: bold; }
+                        pre { white-space: pre-wrap; font-family: inherit; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Práctica ICFES Pro</h1>
+                        <p><strong>Competencia:</strong> ${document.getElementById('competenciaSelect').value}</p>
+                        <p><strong>Dificultad:</strong> ${document.getElementById('dificultadSelect').value}</p>
+                        <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                    </div>
+                    <pre>${state.rawQuestionsText}</pre>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        };
+
+        window.resetGenerator = () => {
+            state.questions = [];
+            state.userAnswers = {};
+            state.submittedQuestions.clear();
+            state.rawQuestionsText = '';
+
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('questionsContainer').innerHTML = '';
+            document.getElementById('messageContainer').innerHTML = '';
+            document.getElementById('competenciaSelect').value = '';
+            document.getElementById('numQuestionsInput').value = '5';
+            document.getElementById('dificultadSelect').value = 'medio';
+            document.getElementById('customKnowledgeSelect').value = 'true';
+            
+            // NUEVO: Resetear paneles globales
+            document.getElementById('globalSubmitContainer').style.display = 'none';
+            document.getElementById('globalResultsPanel').style.display = 'none';
+            document.getElementById('globalResultsTable').innerHTML = '';
+            
+            utils.updateStats();
+            utils.showMessage('success', '🔄 Generador reiniciado. ¡Listo para una nueva práctica!', 3000);
+        };
+
+        // INICIALIZACIÓN
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('competenciaSelect').focus();
+            utils.updateStats();
+        });
+    </script>
+</body>
+</html>

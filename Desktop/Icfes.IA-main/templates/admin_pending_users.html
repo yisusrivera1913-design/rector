@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios Pendientes - ICFES Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-success {
+            background: #28a745;
+            border: none;
+        }
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+        }
+        .user-card {
+            transition: all 0.3s;
+        }
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .badge-profesor {
+            background-color: #17a2b8;
+        }
+        .badge-estudiante {
+            background-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0 sidebar">
+                <div class="d-flex flex-column p-3">
+                    <h5 class="mb-4">
+                        <i class="fas fa-user-shield"></i> Admin Panel
+                    </h5>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a class="nav-link active" href="/admin/pending-users">
+                            <i class="fas fa-clock"></i> Usuarios Pendientes
+                        </a>
+                        <a class="nav-link" href="/admin/users">
+                            <i class="fas fa-users"></i> Todos los Usuarios
+                        </a>
+                    </nav>
+                    <div class="mt-auto">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Usuarios Pendientes de Aprobación</h2>
+                    <button class="btn btn-primary" onclick="loadPendingUsers()">
+                        <i class="fas fa-sync"></i> Actualizar
+                    </button>
+                </div>
+
+                <div id="alert-container"></div>
+
+                <!-- Pending Professors -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chalkboard-teacher text-info"></i> Profesores Pendientes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="profesores-pendientes">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Students -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-graduate text-success"></i> Estudiantes Pendientes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="estudiantes-pendientes">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function loadPendingUsers() {
+            try {
+                const response = await fetch('/api/admin/pending-users');
+                const data = await response.json();
+
+                if (data.success) {
+                    displayPendingUsers(data.pending_users);
+                } else {
+                    showAlert('Error al cargar usuarios pendientes', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'danger');
+            }
+        }
+
+        function displayPendingUsers(pendingUsers) {
+            // Display pending professors
+            const profesoresDiv = document.getElementById('profesores-pendientes');
+            if (pendingUsers.profesores.length > 0) {
+                let html = '<div class="row">';
+                pendingUsers.profesores.forEach(user => {
+                    html += createUserCard(user, 'profesor');
+                });
+                html += '</div>';
+                profesoresDiv.innerHTML = html;
+            } else {
+                profesoresDiv.innerHTML = '<div class="text-center text-muted py-3">No hay profesores pendientes</div>';
+            }
+
+            // Display pending students
+            const estudiantesDiv = document.getElementById('estudiantes-pendientes');
+            if (pendingUsers.estudiantes.length > 0) {
+                let html = '<div class="row">';
+                pendingUsers.estudiantes.forEach(user => {
+                    html += createUserCard(user, 'estudiante');
+                });
+                html += '</div>';
+                estudiantesDiv.innerHTML = html;
+            } else {
+                estudiantesDiv.innerHTML = '<div class="text-center text-muted py-3">No hay estudiantes pendientes</div>';
+            }
+        }
+
+        function createUserCard(user, userType) {
+            const badgeClass = userType === 'profesor' ? 'badge-profesor' : 'badge-estudiante';
+            const iconClass = userType === 'profesor' ? 'fa-chalkboard-teacher' : 'fa-user-graduate';
+
+            return `
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card user-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas ${iconClass} fa-2x me-3 text-primary"></i>
+                                <div>
+                                    <h6 class="card-title mb-1">${user.nombre}</h6>
+                                    <span class="badge ${badgeClass}">${userType.charAt(0).toUpperCase() + userType.slice(1)}</span>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-id-card"></i> ${user.cedula}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-envelope"></i> ${user.email}
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> Registrado: ${new Date(user.creado_en).toLocaleDateString()}
+                                </small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm flex-fill" onclick="approveUser('${user.id}', '${userType}')">
+                                    <i class="fas fa-check"></i> Aprobar
+                                </button>
+                                <button class="btn btn-danger btn-sm flex-fill" onclick="rejectUser('${user.id}', '${userType}')">
+                                    <i class="fas fa-times"></i> Rechazar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function approveUser(userId, userType) {
+            try {
+                const response = await fetch('/api/admin/approve-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id: userId, user_type: userType })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    loadPendingUsers(); // Reload the list
+                } else {
+                    showAlert(data.error || 'Error al aprobar usuario', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'danger');
+            }
+        }
+
+        async function rejectUser(userId, userType) {
+            if (!confirm('¿Está seguro de rechazar este usuario? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/reject-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id: userId, user_type: userType })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    loadPendingUsers(); // Reload the list
+                } else {
+                    showAlert(data.error || 'Error al rechazar usuario', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'danger');
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertId = 'alert-' + Date.now();
+            alertContainer.innerHTML = `
+                <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                const alert = document.getElementById(alertId);
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        // Load pending users on page load
+        document.addEventListener('DOMContentLoaded', loadPendingUsers);
+    </script>
+</body>
+</html>

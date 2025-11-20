@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Panel estudiante</title></head>
+<body>
+  <h2>Panel de {{ user.nombre }}</h2>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+      {% for cat,msg in messages %}
+        <li><strong>{{ cat }}:</strong> {{ msg }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <h3>Herramientas del Estudiante</h3>
+  <form method="post" action="{{ url_for('student.generate_exam') }}">
+    <button type="submit">Generar Nuevo Simulacro ICFES</button>
+  </form>
+
+  <h3>Mis Exámenes</h3>
+  {% if exams %}
+    <table border="1">
+      <tr><th>Título</th><th>Puntaje</th><th>Fecha</th><th>Acción</th></tr>
+      {% for e in exams %}
+      <tr>
+        <td>{{ e.title }}</td>
+        <td>{{ "%.2f"|format(e.score) if e.score else "Pendiente" }}</td>
+        <td>{{ e.created_at }}</td>
+        <td>
+          {% if not e.score %}
+            <a href="{{ url_for('student.take_exam', exam_id=e.id) }}">Tomar Examen</a>
+          {% else %}
+            Completado
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No tienes exámenes aún.</p>
+  {% endif %}
+
+  <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+</body>
+</html>

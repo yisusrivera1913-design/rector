@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>ICFES Generator</title></head>
+<body>
+  <h1>ICFES Generator</h1>
+  {% if user %}
+    <p>Bienvenido, {{ user.nombre }}</p>
+    <a href="{{ url_for('student.student_panel') }}">Mi Panel</a> |
+    <a href="{{ url_for('logout') }}">Salir</a>
+  {% else %}
+    <a href="{{ url_for('auth.register') }}">Registrar estudiante</a> |
+    <a href="{{ url_for('auth.login') }}">Ingresar (cedula)</a> |
+    <a href="{{ url_for('admin.admin_login') }}">Admin</a>
+  {% endif %}
+</body>
+</html>

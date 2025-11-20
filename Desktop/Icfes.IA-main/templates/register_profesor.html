@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Profesor - ICFES IA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        h2::before {
+            content: '👨‍🏫 ';
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        input.error {
+            border-color: #ff6b6b;
+        }
+        input.success {
+            border-color: #51cf66;
+        }
+        .input-feedback {
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .input-feedback.error { color: #ff6b6b; display: block; }
+        .input-feedback.success { color: #51cf66; display: block; }
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            display: none;
+        }
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+        .strength-weak { background: #ff6b6b; width: 33%; }
+        .strength-medium { background: #ffd93d; width: 66%; }
+        .strength-strong { background: #51cf66; width: 100%; }
+        .strength-text {
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+        #message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+        #message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+            border: 1px solid #c3e6cb;
+        }
+        #message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+            border: 1px solid #f5c6cb;
+        }
+        .form-links {
+            margin-top: 25px;
+            text-align: center;
+        }
+        .form-links p {
+            margin: 12px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .form-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .form-links a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Registro de Profesor</h2>
+        <form id="registerForm" novalidate>
+            <div class="form-group">
+                <label for="nombre">Nombre Completo</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Juan Pérez" required>
+                <div class="input-feedback"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cedula">Cédula</label>
+                <input type="text" id="cedula" name="cedula" placeholder="1234567890" required>
+                <div class="input-feedback"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" required autocomplete="off">
+                <div class="input-feedback"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required autocomplete="off">
+                <div class="password-strength">
+                    <div class="password-strength-bar"></div>
+                </div>
+                <div class="strength-text"></div>
+                <div class="input-feedback"></div>
+            </div>
+            
+            <button type="submit" class="btn">Registrar</button>
+        </form>
+        
+        <div id="message"></div>
+        
+        <div class="form-links">
+            <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a></p>
+            <p><a href="/register/estudiante">¿Eres estudiante? Regístrate aquí</a></p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const inputs = form.querySelectorAll('input');
+        const submitBtn = form.querySelector('.btn');
+        const messageDiv = document.getElementById('message');
+
+        // Validaciones
+        const validators = {
+            nombre: (value) => value.trim().length >= 3 ? null : 'Mínimo 3 caracteres',
+            cedula: (value) => /^\d{6,}$/.test(value) ? null : 'Cédula inválida',
+            email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? null : 'Email inválido',
+            password: (value) => value.length >= 8 ? null : 'Mínimo 8 caracteres'
+        };
+
+        function getPasswordStrength(password) {
+            if (password.length < 8) return 'weak';
+            const hasUpper = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSpecial = /[!@#$%^&*]/.test(password);
+            if (hasUpper && hasNumber && hasSpecial) return 'strong';
+            if (hasUpper && hasNumber) return 'medium';
+            return 'weak';
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => validateField(input));
+            input.addEventListener('input', () => {
+                if (input.id === 'password') updatePasswordStrength(input);
+            });
+        });
+
+        function validateField(input) {
+            const feedback = input.nextElementSibling;
+            const error = validators[input.name]?.(input.value);
+
+            input.classList.remove('error', 'success');
+            feedback.classList.remove('error', 'success');
+
+            if (error) {
+                input.classList.add('error');
+                feedback.classList.add('error');
+                feedback.textContent = error;
+            } else if (input.value.trim()) {
+                input.classList.add('success');
+                feedback.classList.add('success');
+                feedback.textContent = '✓';
+            }
+        }
+
+        function updatePasswordStrength(input) {
+            const strength = getPasswordStrength(input.value);
+            const strengthDiv = input.nextElementSibling.nextElementSibling;
+            const strengthText = strengthDiv.nextElementSibling;
+            const strengthBar = strengthDiv.querySelector('.password-strength-bar');
+
+            if (input.value) {
+                strengthDiv.style.display = 'block';
+                strengthBar.className = `password-strength-bar strength-${strength}`;
+                strengthText.className = 'strength-text';
+                strengthText.textContent = strength === 'strong' ? '✓ Contraseña fuerte' : 
+                                          strength === 'medium' ? '◐ Contraseña media' : 
+                                          '✗ Contraseña débil';
+            } else {
+                strengthDiv.style.display = 'none';
+            }
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            let isValid = true;
+            inputs.forEach(input => {
+                validateField(input);
+                if (input.classList.contains('error')) isValid = false;
+            });
+
+            if (!isValid) return;
+
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            messageDiv.className = '';
+
+            try {
+                const data = Object.fromEntries(new FormData(this));
+                const response = await fetch('/register/profesor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.className = 'success';
+                    messageDiv.textContent = result.message;
+                    setTimeout(() => window.location.href = '/login', 2000);
+                } else {
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = result.message;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                }
+            } catch (error) {
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'Error en el registro. Intenta nuevamente.';
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }
+        });
+    </script>
+</body>
+</html>
