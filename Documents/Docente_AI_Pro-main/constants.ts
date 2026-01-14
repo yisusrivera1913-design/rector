@@ -1,0 +1,34 @@
+export const GRADOS = [
+  "Primero",
+  "Segundo",
+  "Tercero",
+  "Cuarto",
+  "Quinto",
+  "Sexto",
+  "Séptimo",
+  "Octavo",
+  "Noveno",
+  "Décimo",
+  "Undécimo"
+];
+
+export const AREAS = [
+  "Matemáticas",
+  "Lengua Castellana",
+  "Ciencias Naturales",
+  "Ciencias Sociales",
+  "Inglés",
+  "Educación Artística",
+  "Educación Física",
+  "Tecnología e Informática",
+  "Ética y Valores",
+  "Religión"
+];
+
+export const EJES_CRESE = [
+  "Ciudadanía y Convivencia",
+  "Educación Sexual",
+  "Educación Ambiental",
+  "Estilos de Vida Saludable",
+  "Derechos Humanos"
+];
